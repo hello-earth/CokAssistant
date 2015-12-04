@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -115,6 +116,7 @@ public class MainActivity extends Activity implements IBRInteraction{
 
 	private void stopTask(){
 		TaskHelperUtil.killApplication("com.cyjh.elfin");
+		TaskHelperUtil.firstRun = true;
 		PlanManagerUtil.cancelUpdateBroadcast(getBaseContext());
 	}
 	
