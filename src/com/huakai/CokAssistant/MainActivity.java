@@ -11,7 +11,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -82,6 +85,13 @@ public class MainActivity extends Activity implements IBRInteraction{
 		intView();
 	}
 
+	private void ChangeStatue(boolean isRuning){
+		SharedPreferences sharedPreferences = getSharedPreferences("CokAssistant", Context.MODE_PRIVATE); //私有数据
+		Editor editor = sharedPreferences.edit();//获取编辑器
+		editor.putBoolean("firstRun", isRuning);
+		editor.commit();//提交修改
+	}
+	
 	private void intView() {  
 		ArrayList<File> files = tMgr.getFolds();
 		for(int i=0; i<files.size();i++){
@@ -103,6 +113,7 @@ public class MainActivity extends Activity implements IBRInteraction{
 			os.writeBytes("input tap 540 1820\n"); 
 			os.flush();
 			os.close();
+			ChangeStatue(true);
 			return true;
 		}catch (InterruptedException e) {
 			e.printStackTrace();
@@ -115,8 +126,8 @@ public class MainActivity extends Activity implements IBRInteraction{
 	}
 
 	private void stopTask(){
+		ChangeStatue(false);
 		TaskHelperUtil.killApplication("com.cyjh.elfin");
-		TaskHelperUtil.firstRun = true;
 		PlanManagerUtil.cancelUpdateBroadcast(getBaseContext());
 	}
 	

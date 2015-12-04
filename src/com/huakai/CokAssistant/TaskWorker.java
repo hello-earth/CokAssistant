@@ -2,9 +2,12 @@ package com.huakai.CokAssistant;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.widget.Toast;
 
 public class TaskWorker extends BroadcastReceiver{
@@ -12,7 +15,8 @@ public class TaskWorker extends BroadcastReceiver{
 	int runningTimes;
 	static IBRInteraction brInteraction;
 	Context mContext;
-	
+	boolean firstRun;
+	SharedPreferences sharedPreferences;
 	
 	public static void setIBRInteraction(IBRInteraction brInteraction){
 		TaskWorker.brInteraction = brInteraction;
@@ -20,15 +24,21 @@ public class TaskWorker extends BroadcastReceiver{
 
 	public void onReceive(Context context, Intent intent) {
 		mContext = context;
+		sharedPreferences = mContext.getSharedPreferences("CokAssistant", Context.MODE_PRIVATE); //私有数据
+		firstRun = sharedPreferences.getBoolean("firstRun", true);
 		execute();
 	}
 
 	private void execute(){
 		runningTimes++;
 		try {
+			
 			Process process = Runtime.getRuntime().exec("su");
 			DataOutputStream os = new DataOutputStream(process.getOutputStream());
-			if(!TaskHelperUtil.firstRun){
+			if(!firstRun){
+				Editor editor = sharedPreferences.edit();//获取编辑器
+				editor.putBoolean("firstRun", false);
+				editor.commit();
 				os.writeBytes("input keyevent 26\n"); 
 				os.flush();
 				Thread.sleep(2000);
