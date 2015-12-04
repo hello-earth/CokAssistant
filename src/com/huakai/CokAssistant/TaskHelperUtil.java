@@ -24,7 +24,7 @@ public class TaskHelperUtil {
 	private static final String MYPACKAGENAME = "com.huakai.cok_assistant";
 	private static final String MYMAINACTIVITYNAME = "com.huakai.cok_assistant.MainActivity";
 	private static final String FILEROOT = "/data/data/com.hcg.cok.gp/shared_prefs";
-	
+	public static boolean firstRun = true;
 	private static Context context;
 	private static ActivityManager am;
 	private static TaskHelperUtil tMgr;
@@ -84,6 +84,7 @@ public class TaskHelperUtil {
 	}
 
 	private void renameFold(int arg1, int arg2){
+		firstRun = false;
 		try {
 			Process process = Runtime.getRuntime().exec("su");
 			DataOutputStream os = new DataOutputStream(process.getOutputStream());  

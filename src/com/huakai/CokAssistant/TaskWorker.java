@@ -9,7 +9,6 @@ import android.widget.Toast;
 
 public class TaskWorker extends BroadcastReceiver{
 
-	boolean firstRun = true;
 	int runningTimes;
 	static IBRInteraction brInteraction;
 	Context mContext;
@@ -29,7 +28,7 @@ public class TaskWorker extends BroadcastReceiver{
 		try {
 			Process process = Runtime.getRuntime().exec("su");
 			DataOutputStream os = new DataOutputStream(process.getOutputStream());
-			if(!firstRun){
+			if(!TaskHelperUtil.firstRun){
 				os.writeBytes("input keyevent 26\n"); 
 				os.flush();
 				Thread.sleep(2000);
@@ -46,13 +45,13 @@ public class TaskWorker extends BroadcastReceiver{
 			if(TaskWorker.brInteraction!=null)
 				TaskWorker.brInteraction.sendMsg(runningTimes+".   任务已完成");
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			TaskWorker.brInteraction.sendMsg(e.toString());
 			if(TaskWorker.brInteraction!=null)
 				TaskWorker.brInteraction.sendMsg(runningTimes+".   任务失败");
 		} catch (IOException e) {
-			e.printStackTrace();
+			TaskWorker.brInteraction.sendMsg(e.toString());
 		}
-		firstRun = false;
+		
 	}
 
 }
